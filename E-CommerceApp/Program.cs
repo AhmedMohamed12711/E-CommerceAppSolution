@@ -3,6 +3,9 @@ using DomainLayer.Constracts;
 using Microsoft.EntityFrameworkCore;
 using Presistance.Data;
 using Presistance.Data.DataSeeding;
+using Presistance.Repository;
+using Service;
+using ServiceAbstraction;
 
 namespace E_CommerceApp
 {
@@ -22,6 +25,10 @@ namespace E_CommerceApp
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddAutoMapper(X => X.AddProfile(new MappingProfile()));
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
+            builder.Services.AddScoped<PictureUrlResolver>();
             #endregion
 
 
@@ -45,7 +52,7 @@ namespace E_CommerceApp
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseAuthorization();
 
 

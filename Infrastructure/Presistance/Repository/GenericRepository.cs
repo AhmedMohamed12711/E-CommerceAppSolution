@@ -2,6 +2,7 @@
 using DomainLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Presistance.Data;
+using Service.Specifications;
 
 namespace Presistance.Repository
 {
@@ -14,14 +15,26 @@ namespace Presistance.Repository
 
         public async Task<IEnumerable<TEntity>> GetAllAsync() => await _dbContext.Set<TEntity>().ToListAsync ();
 
-
-        public async Task<TEntity?> GetByIdAsync(Tkey id) => await _dbContext.Set<TEntity>().FindAsync(id);
-      
+     
 
         public void Remove(TEntity entity)=> _dbContext.Set<TEntity>().Remove(entity);
         
 
+        public async Task<TEntity?> GetByIdAsync(Tkey id) => await _dbContext.Set<TEntity>().FindAsync(id);
         public void Update(TEntity entity)=>_dbContext.Set<TEntity>().Update(entity);
-      
+        #region With Specefication
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity, Tkey> specification)
+        {
+            return await SpecificationEvaluated.CreateQuery(_dbContext.Set<TEntity>(), specification).ToListAsync();
+        }
+
+
+        public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity, Tkey> specification)
+        {
+            return await SpecificationEvaluated.CreateQuery(_dbContext.Set<TEntity>(),specification).FirstOrDefaultAsync();
+        } 
+        #endregion
+
     }
 }

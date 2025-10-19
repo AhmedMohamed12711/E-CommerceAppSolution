@@ -15,5 +15,10 @@ namespace DomainLayer.Constracts
         void Update(TEntity entity);
         //Delete
         void Remove(TEntity entity);
+        #region With Specification
+        Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity,Tkey> specification);
+        Task<TEntity?> GetByIdAsync(ISpecification<TEntity, Tkey> specification);
+
+        #endregion
     }
 }
