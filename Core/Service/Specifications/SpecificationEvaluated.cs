@@ -27,6 +27,10 @@ namespace Service.Specifications
             {
                 Query = specification.IncludeExpression.Aggregate(Query, (CurrentQuery, IncludeExpression) => CurrentQuery.Include(IncludeExpression));
             }
+            if (specification.IsPaginated)
+            {
+                Query=Query.Skip(specification.Skip).Take(specification.Take);
+            }
 
             return Query;
         }

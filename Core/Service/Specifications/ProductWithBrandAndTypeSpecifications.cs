@@ -34,6 +34,9 @@ namespace Service.Specifications
                     break;
             }
             #endregion
+            #region Pagination
+            ApplyPagination(queryParams.PageSize, queryParams.pageIndex);
+            #endregion
         }
         //Get Product By ID
         public ProductWithBrandAndTypeSpecifications(int Id) :base(P=>P.Id==Id)

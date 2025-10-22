@@ -33,7 +33,12 @@ namespace Presistance.Repository
         public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity, Tkey> specification)
         {
             return await SpecificationEvaluated.CreateQuery(_dbContext.Set<TEntity>(),specification).FirstOrDefaultAsync();
-        } 
+        }
+
+        public async Task<int> CountAsync(ISpecification<TEntity, Tkey> specification)
+        {
+            return await SpecificationEvaluated.CreateQuery(_dbContext.Set<TEntity>(),specification).CountAsync();
+        }
         #endregion
 
     }

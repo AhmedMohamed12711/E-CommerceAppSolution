@@ -1,0 +1,14 @@
+﻿
+using DomainLayer.Models;
+using Shared;
+using System.Linq.Expressions;
+
+namespace Service.Specifications
+{
+    public class ProductCountSpecification(ProductQueryParameter queryParams) : BaseSpecification<Product, int>(P => (!queryParams.BrandId.HasValue || P.BrandId == queryParams.BrandId)
+            && (!queryParams.TypeId.HasValue || P.TypeId == queryParams.TypeId)
+            && (string.IsNullOrWhiteSpace(queryParams.SearchValue) || P.Name.Contains(queryParams.SearchValue.ToLower())))
+    {
+
+    }
+}

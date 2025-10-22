@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using DomainLayer.Constracts;
+using DomainLayer.Exceptions;
 using DomainLayer.Models;
 using Service.Specifications;
 using ServiceAbstraction;
@@ -18,11 +19,17 @@ namespace Service
             return _mapper.Map<IEnumerable<ProductBrand>, IEnumerable<BrandDto>>(Brands);
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync(ProductQueryParameter queryParams)
+        public async Task<PaginatedResult<ProductDto>> GetAllProductsAsync(ProductQueryParameter queryParams)
         {
             var spec = new ProductWithBrandAndTypeSpecifications(queryParams);
-            var Products = await _unitOfWork.GetRepository<Product, int>().GetAllAsync(spec);
-            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(Products);
+            var Repo =  _unitOfWork.GetRepository<Product, int>();
+            var AllProducts = await Repo.GetAllAsync(spec);
+            var Data= _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(AllProducts);
+
+            var ProductCount=AllProducts.Count();
+            var CountSpec = new ProductCountSpecification(queryParams);
+            var TotalCount=await Repo.CountAsync(CountSpec);
+            return new PaginatedResult<ProductDto>(ProductCount,queryParams.pageIndex,TotalCount,Data);
         }
 
 
@@ -37,6 +44,10 @@ namespace Service
         {
             var spec = new ProductWithBrandAndTypeSpecifications(Id);
             var Product = await _unitOfWork.GetRepository<Product, int>().GetByIdAsync(spec);
+            if(Product == null)
+            {
+                throw new ProductNotFoundException(Id);
+            }
             return _mapper.Map<Product, ProductDto>(Product);
          }
     }

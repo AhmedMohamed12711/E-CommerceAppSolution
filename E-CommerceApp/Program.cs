@@ -1,5 +1,6 @@
 
 using DomainLayer.Constracts;
+using E_CommerceApp.CustomMiddleware;
 using Microsoft.EntityFrameworkCore;
 using Presistance.Data;
 using Presistance.Data.DataSeeding;
@@ -43,7 +44,7 @@ namespace E_CommerceApp
             var ObjectOfDataSeeding = Scope.ServiceProvider.GetRequiredService<IDataSeeding>();
            await ObjectOfDataSeeding.DataSeedAsync();
             #endregion
-
+            app.UseMiddleware<CustomExceptionHandelerMiddleware>();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
