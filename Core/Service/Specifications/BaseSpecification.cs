@@ -1,5 +1,5 @@
 ﻿using DomainLayer.Constracts;
-using DomainLayer.Models;
+using DomainLayer.Models.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;

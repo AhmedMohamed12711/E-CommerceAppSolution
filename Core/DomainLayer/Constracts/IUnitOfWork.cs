@@ -1,6 +1,4 @@
-﻿
-
-using DomainLayer.Models;
+﻿using DomainLayer.Models.Product;
 
 namespace DomainLayer.Constracts
 {

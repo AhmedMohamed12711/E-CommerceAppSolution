@@ -1,4 +1,4 @@
-﻿using DomainLayer.Models;
+﻿using DomainLayer.Models.Product;
 using Shared;
 using Shared.Enums;
 using System.Linq.Expressions;

@@ -9,7 +9,7 @@ namespace E_CommerceApp.CustomMiddleware
         private readonly RequestDelegate _next;
         private readonly ILogger<CustomExceptionHandelerMiddleware> _logger;
 
-        public CustomExceptionHandelerMiddleware(RequestDelegate Next,ILogger<CustomExceptionHandelerMiddleware> logger)
+        public CustomExceptionHandelerMiddleware(RequestDelegate Next, ILogger<CustomExceptionHandelerMiddleware> logger)
         {
             _next = Next;
             _logger = logger;

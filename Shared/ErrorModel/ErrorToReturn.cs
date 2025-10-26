@@ -1,4 +1,6 @@
-﻿namespace Shared.ErrorModel
+﻿using System.Text.Json.Serialization;
+
+namespace Shared.ErrorModel
 {
     public class ErrorToReturn
     {

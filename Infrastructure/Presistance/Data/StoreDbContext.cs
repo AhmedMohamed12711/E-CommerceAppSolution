@@ -1,5 +1,4 @@
-﻿
-using DomainLayer.Models;
+﻿using DomainLayer.Models.Product;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 namespace Presistance.Data

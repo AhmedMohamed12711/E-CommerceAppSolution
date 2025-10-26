@@ -1,5 +1,4 @@
-﻿
-namespace DomainLayer.Models
+﻿namespace DomainLayer.Models.Product
 {
     public class BaseEntity<TKey>
     {

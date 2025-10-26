@@ -1,12 +1,16 @@
 
 using DomainLayer.Constracts;
 using E_CommerceApp.CustomMiddleware;
+using E_CommerceApp.Factories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presistance.Data;
 using Presistance.Data.DataSeeding;
 using Presistance.Repository;
 using Service;
 using ServiceAbstraction;
+using Shared.ErrorModel;
+using StackExchange.Redis;
 
 namespace E_CommerceApp
 {
@@ -30,21 +34,37 @@ namespace E_CommerceApp
             builder.Services.AddAutoMapper(X => X.AddProfile(new MappingProfile()));
             builder.Services.AddScoped<IServiceManager, ServiceManager>();
             builder.Services.AddScoped<PictureUrlResolver>();
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = APIesponseFactory.GenerateApiValdiationErrorResponse;
+
+
+            });
+            builder.Services.AddScoped<IBaskerRepository, BaskerRepository>();
+            builder.Services.AddScoped<IBasketService, BasketService>();
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>((_) =>
+            {
+                return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RediusConnection"));
+            });
+
             #endregion
-
-
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+             #region Build
             var app = builder.Build();
+            #endregion
             //???? ???? ?? UpdateDatabase
             #region Service
             var Scope = app.Services.CreateScope();
             var ObjectOfDataSeeding = Scope.ServiceProvider.GetRequiredService<IDataSeeding>();
            await ObjectOfDataSeeding.DataSeedAsync();
             #endregion
-            app.UseMiddleware<CustomExceptionHandelerMiddleware>();
+            #region MiddleWare
+            app.UseMiddleware<CustomExceptionHandelerMiddleware>(); 
+            #endregion
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
