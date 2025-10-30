@@ -1,7 +1,9 @@
 
 using DomainLayer.Constracts;
+using DomainLayer.Models.Identity_Module;
 using E_CommerceApp.CustomMiddleware;
 using E_CommerceApp.Factories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presistance.Data;
@@ -25,10 +27,16 @@ namespace E_CommerceApp
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             #region Configure Service
+            #region ConnectionString
             builder.Services.AddDbContext<StoreDbContext>(options =>
+                {
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                });
+            builder.Services.AddDbContext<StoreIdentityDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+            }); 
+            #endregion
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddAutoMapper(X => X.AddProfile(new MappingProfile()));
@@ -48,6 +56,9 @@ namespace E_CommerceApp
                 return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RediusConnection"));
             });
 
+            builder.Services.AddIdentityCore<ApplicationUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<StoreIdentityDbContext>(); 
             #endregion
 
             builder.Services.AddEndpointsApiExplorer();
@@ -59,7 +70,9 @@ namespace E_CommerceApp
             #region Service
             var Scope = app.Services.CreateScope();
             var ObjectOfDataSeeding = Scope.ServiceProvider.GetRequiredService<IDataSeeding>();
-           await ObjectOfDataSeeding.DataSeedAsync();
+             await ObjectOfDataSeeding.DataSeedAsync();
+            await ObjectOfDataSeeding.IdentityDataSeed();
+           
             #endregion
             #region MiddleWare
             app.UseMiddleware<CustomExceptionHandelerMiddleware>(); 

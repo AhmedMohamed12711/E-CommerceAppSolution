@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Presintation.Controllers;
 using ServiceAbstraction;
 using Shared;
 using Shared.DTOS;
@@ -7,9 +8,8 @@ using Shared.Enums;
 
 namespace Presintation.Controller
 {
-    [ApiController]
-    [Route("api/[controller]")]  //=>Baseurl/api/products
-    public class ProductsController(IServiceManager _serviceManager) : ControllerBase
+   
+    public class ProductsController(IServiceManager _serviceManager):APIBaseController
     {
         #region GetAllProduct
         [HttpGet]

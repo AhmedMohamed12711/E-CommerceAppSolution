@@ -3,9 +3,8 @@ using ServiceAbstraction;
 using Shared.DTOS.BasketDTo;
 namespace Presintation.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]  //=>Baseurl/api/products
-    public class BasketsController(IServiceManager _serviceManager):ControllerBase
+    
+    public class BasketsController(IServiceManager _serviceManager):APIBaseController
     {
         //GetBasket
         [HttpGet]
