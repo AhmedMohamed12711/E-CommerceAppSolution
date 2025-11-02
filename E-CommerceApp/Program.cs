@@ -3,9 +3,12 @@ using DomainLayer.Constracts;
 using DomainLayer.Models.Identity_Module;
 using E_CommerceApp.CustomMiddleware;
 using E_CommerceApp.Factories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Presistance.Data;
 using Presistance.Data.DataSeeding;
 using Presistance.Repository;
@@ -13,6 +16,7 @@ using Service;
 using ServiceAbstraction;
 using Shared.ErrorModel;
 using StackExchange.Redis;
+using System.Text;
 
 namespace E_CommerceApp
 {
@@ -58,7 +62,31 @@ namespace E_CommerceApp
 
             builder.Services.AddIdentityCore<ApplicationUser>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<StoreIdentityDbContext>(); 
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
+
+            #region JWTAuthentication
+            builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                }).AddJwtBearer(options =>
+                {
+                    var jwtSettings = builder.Configuration.GetSection("JWTOptions");
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                         Encoding.UTF8.GetBytes(jwtSettings["Secretkey"]!))
+                    };
+                }); 
+            #endregion
             #endregion
 
             builder.Services.AddEndpointsApiExplorer();
@@ -87,6 +115,8 @@ namespace E_CommerceApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

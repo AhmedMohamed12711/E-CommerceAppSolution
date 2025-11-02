@@ -1,6 +1,7 @@
 ﻿
 using DomainLayer.Constracts;
 using DomainLayer.Models.Identity_Module;
+using DomainLayer.Models.Order_Module;
 using DomainLayer.Models.Product;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -53,7 +54,18 @@ namespace Presistance.Data.DataSeeding
                 }
             }
             #endregion
-           await _dbContext.SaveChangesAsync();
+            #region DeliviryMethod
+            if (!_dbContext.DeliveryMethods.Any())
+            {
+                var DelivairyData = File.OpenRead(@"..\Infrastructure\Presistance\Data\DataSeeding\delivery.json");
+                var Methods = await JsonSerializer.DeserializeAsync<List<DeliveryMethod>>(DelivairyData);
+                if (Methods.Any() && Methods is not null)
+                {
+                    await _dbContext.DeliveryMethods.AddRangeAsync(Methods);
+                }
+            }
+            #endregion
+            await _dbContext.SaveChangesAsync();
             #endregion
         }
 

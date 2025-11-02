@@ -2,9 +2,13 @@
 
 using AutoMapper;
 using DomainLayer.Models.BasketModule;
+using DomainLayer.Models.Identity_Module;
+using DomainLayer.Models.Order_Module;
 using DomainLayer.Models.Product;
 using Shared.DTOS;
 using Shared.DTOS.BasketDTo;
+using Shared.DTOS.IdentityDtos;
+using Shared.DTOS.Order;
 
 namespace Service
 {
@@ -24,6 +28,12 @@ namespace Service
             #region Basket
             CreateMap<CustumerBasket, BasketDto>().ReverseMap();
             CreateMap<BasketItem, BasketItemDto>().ReverseMap();
+            #endregion
+            #region Identity
+            CreateMap<Address, AddressDto>().ReverseMap();
+            #endregion
+            #region Order
+            CreateMap<ShippingAddressDto, ShippingAddress>();
             #endregion
         }
     }

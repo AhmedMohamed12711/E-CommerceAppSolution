@@ -13,7 +13,7 @@ namespace Service
     {
         private readonly Lazy<IProductService> _productService=new Lazy<IProductService>(()=>new ProductService(_unitOfWork,_mapper));
         private readonly Lazy<IBasketService> _basketService = new Lazy<IBasketService>(()=>new BasketService(_baskerRepository,_mapper));
-        private readonly Lazy<IAuthenticationService> _authenticationService = new Lazy<IAuthenticationService>(()=>new AuthenticationService(_userManager,configuration));
+        private readonly Lazy<IAuthenticationService> _authenticationService = new Lazy<IAuthenticationService>(()=>new AuthenticationService(_userManager,configuration,_mapper));
         public IProductService ProductService =>_productService.Value;
 
         public IBasketService BasketService => _basketService.Value;
