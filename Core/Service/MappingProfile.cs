@@ -33,7 +33,20 @@ namespace Service
             CreateMap<Address, AddressDto>().ReverseMap();
             #endregion
             #region Order
-            CreateMap<ShippingAddressDto, ShippingAddress>();
+            //CreateMap<OrderDto, Order>();
+            CreateMap<ShippingAddressDto, ShippingAddress>().ReverseMap();
+            CreateMap<DeliveryMethod, DeliveryMethodDto>();
+
+            CreateMap<Order, OrderToReturnDto>()
+                .ForMember(dest => dest.DeliveryMethod, opt => opt.MapFrom(src => src.DeliveryMethod.ShortName))
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.GetTotal()))
+                .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus.ToString()))
+                    .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address)); 
+            
+
+            CreateMap<OrderItem, OrderItemDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
+                .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Product.PictureUrl));
             #endregion
         }
     }

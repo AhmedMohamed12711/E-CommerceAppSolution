@@ -16,7 +16,10 @@ using Service;
 using ServiceAbstraction;
 using Shared.ErrorModel;
 using StackExchange.Redis;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
+using System.Text.Json;
+using Microsoft.OpenApi.Models;
 
 namespace E_CommerceApp
 {
@@ -44,7 +47,26 @@ namespace E_CommerceApp
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddAutoMapper(X => X.AddProfile(new MappingProfile()));
-            builder.Services.AddScoped<IServiceManager, ServiceManager>();
+            #region DelegetFactory
+            builder.Services.AddScoped<IServiceManager, ServiceManagerWithFactoryDelegete>();//------
+
+            builder.Services.AddScoped<IProductService, ProductService>();//--------
+            builder.Services.AddScoped<Func<IProductService>>(provider =>
+                () => provider.GetRequiredService<IProductService>());
+
+            builder.Services.AddScoped<IOrderService, OrderService>();//--------
+            builder.Services.AddScoped<Func<IOrderService>>(provider =>
+                () => provider.GetRequiredService<IOrderService>());
+
+            builder.Services.AddScoped<IBasketService, BasketService>();//--------
+            builder.Services.AddScoped<Func<IBasketService>>(provider =>
+                () => provider.GetRequiredService<IBasketService>());
+
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();//--------
+            builder.Services.AddScoped<Func<IAuthenticationService>>(provider =>
+                () => provider.GetRequiredService<IAuthenticationService>()); 
+            #endregion
+
             builder.Services.AddScoped<PictureUrlResolver>();
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -85,12 +107,39 @@ namespace E_CommerceApp
                         IssuerSigningKey = new SymmetricSecurityKey(
                          Encoding.UTF8.GetBytes(jwtSettings["Secretkey"]!))
                     };
-                }); 
+                });
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            
+            
             #endregion
             #endregion
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    In=ParameterLocation.Header,
+                    Name="Authorization",
+                    Type=SecuritySchemeType.ApiKey,
+                    Scheme="Bearer",
+                    Description="Enter 'Bearer' Followed By Space And Your Token"
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference=new OpenApiReference()
+                            {
+                                Id="Bearer",
+                                Type=ReferenceType.SecurityScheme,
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
              #region Build
             var app = builder.Build();
             #endregion
@@ -110,7 +159,22 @@ namespace E_CommerceApp
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.ConfigObject = new ConfigObject()
+                    {
+                        DisplayRequestDuration=true,
+                        
+                    };
+                    options.DocumentTitle = "My E-Commerce API";
+                    options.JsonSerializerOptions = new JsonSerializerOptions()
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    };
+                    options.DocExpansion(DocExpansion.None);
+                    options.EnableFilter();
+                    options.EnablePersistAuthorization();
+                });
             }
 
             app.UseHttpsRedirection();
