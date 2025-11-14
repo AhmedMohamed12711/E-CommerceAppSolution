@@ -29,7 +29,7 @@ namespace Service
             var ProductCount=AllProducts.Count();
             var CountSpec = new ProductCountSpecification(queryParams);
             var TotalCount=await Repo.CountAsync(CountSpec);
-            return new PaginatedResult<ProductDto>(ProductCount,queryParams.pageIndex,TotalCount,Data);
+            return new PaginatedResult<ProductDto>(ProductCount,queryParams.pageNumber,TotalCount,Data);
         }
 
 

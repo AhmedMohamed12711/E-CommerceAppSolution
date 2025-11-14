@@ -2,17 +2,22 @@
 {
     public class Product:BaseEntity<int>
     {
-        public string Name { get; set; }=null!;
-        public string Description { get; set; } = null!;
-        public string PictureUrl {  get; set; } = null!;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        #region ProductBrand
-        public int BrandId {  get; set; }
-        public ProductBrand ProductBrand { get; set; }
+        public string PictureUrl { get; set; } = string.Empty;
+
+        // ✅ نحافظ على الـ FKs والعلاقات لكن نغير أسماء الخصائص لتطابق الـ DTO
+        #region Product Brand
+        public int BrandId { get; set; }
+        public ProductBrand ProductBrand { get; set; } = null!;
+
         #endregion
-        #region ProductType
+
+        #region Product Type
         public int TypeId { get; set; }
-        public ProductType ProductType { get; set; }
+        public ProductType ProductType { get; set; } = null!;
+
         #endregion
 
     }

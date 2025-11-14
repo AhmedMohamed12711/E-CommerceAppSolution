@@ -4,7 +4,7 @@ using Shared.DTOS.BasketDTo;
 namespace Presintation.Controllers
 {
     
-    public class BasketsController(IServiceManager _serviceManager):APIBaseController
+    public class basketController(IServiceManager _serviceManager):APIBaseController
     {
         //GetBasket
         [HttpGet]

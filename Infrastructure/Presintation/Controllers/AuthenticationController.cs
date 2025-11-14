@@ -10,7 +10,7 @@ namespace Presintation.Controllers
     public class AuthenticationController(IServiceManager _serviceManager):APIBaseController
     {
         #region Register
-        [HttpPost("Register")]
+        [HttpPost("register")]
 
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
@@ -19,7 +19,7 @@ namespace Presintation.Controllers
         }
         #endregion
         #region Login
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<ActionResult<UserDto>>Login(LoginDto loginDto)
         {
             var User=await _serviceManager.AuthenticationService.LoginAsync(loginDto);
@@ -27,7 +27,7 @@ namespace Presintation.Controllers
         }
         #endregion
         #region CheckEmail
-        [HttpGet("CheckEmail")]
+        [HttpGet("emailexists")]
         public async Task<ActionResult<bool>>CheckEmail(string Email)
         {
              var Result=await _serviceManager.AuthenticationService.CheckEmailAsync(Email);
@@ -46,7 +46,7 @@ namespace Presintation.Controllers
         #endregion
         #region GetCurrentUserAddress
         [Authorize]
-        [HttpGet("Address")]
+        [HttpGet("address")]
         public async Task<ActionResult<AddressDto>> GetCurrentUserAddress()
         {
             var Email = User.FindFirstValue(ClaimTypes.Email);
@@ -56,7 +56,7 @@ namespace Presintation.Controllers
         #endregion
         #region UpdateUserAddress
         [Authorize]
-        [HttpPut("Address")]
+        [HttpPut("address")]
         public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto addressDto)
         {
             var Email=User.FindFirstValue(ClaimTypes.Email);

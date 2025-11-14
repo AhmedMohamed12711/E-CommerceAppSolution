@@ -30,6 +30,9 @@ namespace Presistance.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(8,2)");
+
                     b.Property<string>("DeliveryTime")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -39,9 +42,6 @@ namespace Presistance.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(8,2)");
 
                     b.Property<string>("ShortName")
                         .IsRequired()
@@ -62,18 +62,22 @@ namespace Presistance.Data.Migrations
                     b.Property<int>("DeliveryMethodId")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("OrderDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("OrderStatus")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("SubTotal")
-                        .HasColumnType("decimal(8,2)");
-
-                    b.Property<string>("UserEmail")
+                    b.Property<string>("PaymentIntentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("buyerEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("orderDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("subtotal")
+                        .HasColumnType("decimal(8,2)");
 
                     b.HasKey("Id");
 
@@ -186,7 +190,7 @@ namespace Presistance.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("DomainLayer.Models.Order_Module.ShippingAddress", "Address", b1 =>
+                    b.OwnsOne("DomainLayer.Models.Order_Module.ShippingAddress", "shipToAddress", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uniqueidentifier");
@@ -219,16 +223,16 @@ namespace Presistance.Data.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
-                    b.Navigation("Address")
-                        .IsRequired();
-
                     b.Navigation("DeliveryMethod");
+
+                    b.Navigation("shipToAddress")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DomainLayer.Models.Order_Module.OrderItem", b =>
                 {
                     b.HasOne("DomainLayer.Models.Order_Module.Order", null)
-                        .WithMany("Items")
+                        .WithMany("items")
                         .HasForeignKey("OrderId");
 
                     b.OwnsOne("DomainLayer.Models.Order_Module.ProductItemOrder", "Product", b1 =>
@@ -280,7 +284,7 @@ namespace Presistance.Data.Migrations
 
             modelBuilder.Entity("DomainLayer.Models.Order_Module.Order", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("items");
                 });
 #pragma warning restore 612, 618
         }

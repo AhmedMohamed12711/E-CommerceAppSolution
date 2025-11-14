@@ -14,10 +14,22 @@ namespace Service
         public async Task<OrderToReturnDto> CreateOrder(OrderDto orderDto, string Email)
         {
             //Map Address To Order Address
-            var OrderAddress = _mapper.Map<ShippingAddressDto, ShippingAddress>(orderDto.Address);
+            var OrderAddress = _mapper.Map<ShippingAddressDto, ShippingAddress>(orderDto.ShipToAddress);
             //Get Basket
             var Basket = await _baskerRepository.GetBasketAsync(orderDto.BasketId)
                 ?? throw new BasketNotFoundException(orderDto.BasketId); ;
+            ArgumentNullException.ThrowIfNullOrEmpty(Basket.PaymentIntentId);
+            var OrderRepo = _unitOfWork.GetRepository<Order, Guid>();
+            var OrderSpecisications = new OrderWithPaymentIntentIdSpecifications(Basket.PaymentIntentId);
+            var ExistingOrder =await OrderRepo.GetByIdAsync(OrderSpecisications);
+            if (ExistingOrder != null) 
+            {
+                OrderRepo.Remove(ExistingOrder);
+            }
+            
+            
+            
+            
             //Create OrderItem List
             List<OrderItem> OrderItems = [];
             var ProductRepo = _unitOfWork.GetRepository<Product, int>();
@@ -46,7 +58,7 @@ namespace Service
             var SubTotal = OrderItems.Sum(I => I.Quantity * I.Price);
 
             //Create Order
-            var Order = new Order(Email, OrderAddress, DeliveryMethod, OrderItems, SubTotal);
+            var Order = new Order(Email, OrderAddress, DeliveryMethod, OrderItems, SubTotal,Basket.PaymentIntentId!);
             //Add order To Database
             await _unitOfWork.GetRepository<Order,Guid>().AddAsync(Order);
             await _unitOfWork.SaveChangesAsync();

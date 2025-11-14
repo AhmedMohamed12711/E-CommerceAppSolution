@@ -18,8 +18,8 @@ namespace Service
         {
             #region Product
             CreateMap<Product, ProductDto>()
-                   .ForMember(dist => dist.BrandName, options => options.MapFrom(src => src.ProductBrand.Name))
-                   .ForMember(dist => dist.TypeName, options => options.MapFrom(src => src.ProductType.Name))
+                   .ForMember(dist => dist.productBrand, options => options.MapFrom(src => src.ProductBrand.Name))
+                   .ForMember(dist => dist.productType, options => options.MapFrom(src => src.ProductType.Name))
                    .ForMember(dist => dist.PictureUrl, options => options.MapFrom<PictureUrlResolver>());
 
             CreateMap<ProductType, TypeDto>();
@@ -33,20 +33,19 @@ namespace Service
             CreateMap<Address, AddressDto>().ReverseMap();
             #endregion
             #region Order
-            //CreateMap<OrderDto, Order>();
-            CreateMap<ShippingAddressDto, ShippingAddress>().ReverseMap();
+            CreateMap<ShippingAddress, ShippingAddressDto>().ReverseMap();
             CreateMap<DeliveryMethod, DeliveryMethodDto>();
+            CreateMap<OrderItem, OrderItemDto>()
+                .ForMember(dest => dest.ProductId, options => options.MapFrom(s => s.Product.ProductId))
+                .ForMember(dest => dest.ProductName, options => options.MapFrom(s => s.Product.ProductName))
+                .ForMember(dest => dest.PictureUrl, options => options.MapFrom(s => s.Product.PictureUrl));
 
-            CreateMap<Order, OrderToReturnDto>()
-                .ForMember(dest => dest.DeliveryMethod, opt => opt.MapFrom(src => src.DeliveryMethod.ShortName))
-                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.GetTotal()))
-                .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus.ToString()))
-                    .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address)); 
+
+            CreateMap<Order, OrderToReturnDto>();
+                
             
 
-            CreateMap<OrderItem, OrderItemDto>()
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
-                .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Product.PictureUrl));
+           
             #endregion
         }
     }

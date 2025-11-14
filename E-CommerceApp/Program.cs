@@ -64,7 +64,11 @@ namespace E_CommerceApp
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();//--------
             builder.Services.AddScoped<Func<IAuthenticationService>>(provider =>
-                () => provider.GetRequiredService<IAuthenticationService>()); 
+                () => provider.GetRequiredService<IAuthenticationService>());
+
+            builder.Services.AddScoped<IPaymentService, PaymentService>();//--------
+            builder.Services.AddScoped<Func<IPaymentService>>(provider =>
+                () => provider.GetRequiredService<IPaymentService>());
             #endregion
 
             builder.Services.AddScoped<PictureUrlResolver>();
@@ -76,7 +80,19 @@ namespace E_CommerceApp
             });
             builder.Services.AddScoped<IBaskerRepository, BaskerRepository>();
             builder.Services.AddScoped<IBasketService, BasketService>();
+            #region Connection With Angular
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyOrigin();
 
+                });
+            });
+            //call before app authorizatio
+            #endregion
             builder.Services.AddSingleton<IConnectionMultiplexer>((_) =>
             {
                 return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RediusConnection"));
@@ -86,6 +102,8 @@ namespace E_CommerceApp
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StoreIdentityDbContext>();
 
+            builder.Services.AddScoped<ICashService, CashService>();
+            builder.Services.AddScoped<ICashRepository, CashRepository>();
             #region JWTAuthentication
             builder.Services.AddAuthentication(options =>
                 {
@@ -181,6 +199,7 @@ namespace E_CommerceApp
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
+            app.UseCors("AllowAll");
             app.UseAuthorization();
 
 

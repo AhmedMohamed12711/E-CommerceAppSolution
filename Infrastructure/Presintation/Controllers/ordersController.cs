@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace Presintation.Controllers
 {
-    public class OrderController(IServiceManager _serviceManager):APIBaseController
+    public class ordersController(IServiceManager _serviceManager):APIBaseController
     {
         #region CreateOrder
         [Authorize]

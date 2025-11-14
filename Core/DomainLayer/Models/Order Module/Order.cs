@@ -6,29 +6,34 @@ namespace DomainLayer.Models.Order_Module
     {
         public Order()
         {
-            
+
         }
-        public Order(string _UserEmail
-            ,ShippingAddress _Address,DeliveryMethod _DeliveryMethod
-            ,ICollection<OrderItem> _Items
-            ,decimal _SubTotal)
+        public Order(string _UserEmail, ShippingAddress _Address
+           , DeliveryMethod _DeliveryMethod, ICollection<OrderItem> _Items, decimal _SubTotal, string _PaymentIntentId)
         {
-            UserEmail = _UserEmail;
-            Address = _Address;
+            buyerEmail = _UserEmail;
+            shipToAddress = _Address;
             DeliveryMethod = _DeliveryMethod;
-            Items = _Items;
-            SubTotal = _SubTotal;
+            items = _Items;
+            subtotal = _SubTotal;
+            PaymentIntentId = _PaymentIntentId;
         }
-        public string UserEmail { get; set; } = default!;
-        public DateTimeOffset OrderDate { get; set; }= DateTimeOffset.Now; 
-        public OrderStatus OrderStatus { get; set; }
-        public ShippingAddress Address { get; set; }= default!;
-        public DeliveryMethod DeliveryMethod { get; set; }= default!;
-        public int DeliveryMethodId {  get; set; }//FK
-        public ICollection<OrderItem> Items { get; set; } = [];
-        public decimal SubTotal {  get; set; }
-        public decimal GetTotal()=>SubTotal + DeliveryMethod.Price;
-        
+
+
+
+        public string buyerEmail { get; set; } = string.Empty;
+        public DateTimeOffset orderDate { get; set; } = DateTimeOffset.Now;
+        public ShippingAddress shipToAddress { get; set; } = null!;
+        public DeliveryMethod DeliveryMethod { get; set; } = null!;
+        public int DeliveryMethodId { get; set; }
+        public OrderStatus status { get; set; }
+        public ICollection<OrderItem> items { get; set; } = [];
+        public decimal subtotal { get; set; }
+
+        public string PaymentIntentId { get; set; }
+        public decimal deliveryCost => DeliveryMethod.Cost;
+        public decimal Total => subtotal + DeliveryMethod.Cost;
+
 
     }
 }

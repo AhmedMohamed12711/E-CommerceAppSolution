@@ -8,7 +8,7 @@ namespace Presistance.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<DeliveryMethod> builder)
         {
-            builder.Property(d => d.Price).HasColumnType("decimal(8,2)");
+            builder.Property(d => d.Cost).HasColumnType("decimal(8,2)");
             //---
             builder.Property(d => d.ShortName).HasColumnType("varchar").HasMaxLength(50);
             //--

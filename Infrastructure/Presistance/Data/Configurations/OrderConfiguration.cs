@@ -8,12 +8,12 @@ namespace Presistance.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.Property(o => o.SubTotal).HasColumnType("decimal(8,2)");
-            builder.HasMany(o => o.Items)
+            builder.Property(o => o.subtotal).HasColumnType("decimal(8,2)");
+            builder.HasMany(o => o.items)
                 .WithOne();
             builder.HasOne(o => o.DeliveryMethod)
                 .WithMany().HasForeignKey(o => o.DeliveryMethodId);
-            builder.OwnsOne(o => o.Address);
+            builder.OwnsOne(o => o.shipToAddress);
         }
     }
 }

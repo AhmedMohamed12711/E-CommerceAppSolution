@@ -1,11 +1,11 @@
 ﻿namespace Shared.DTOS.Order
 {
-    public class DeliveryMethodDto
+    public record DeliveryMethodDto
     {
-        public int Id { get; set; }  
-        public string ShortName { get; set; } = default!;
-        public string Description { get; set; } = default!;
-        public string DeliveryTime { get; set; } = default!;
-        public decimal Price { get; set; }
+        public int Id { get; init; }
+        public string ShortName { get; init; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
+        public decimal Cost { get; init; }
+        public string DeliveryTime { get; init; } = string.Empty;
     }
 }
